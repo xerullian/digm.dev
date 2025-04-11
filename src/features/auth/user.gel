@@ -1,0 +1,22 @@
+module default {
+  type User {
+    required auth_provider_user_id: str {
+      constraint exclusive;
+    };
+    required name: str {
+      constraint max_len_value(100);
+    };
+    required email: str {
+      constraint exclusive;
+      constraint max_len_value(254);
+    };
+    required created_at: datetime {
+      default := datetime_current();
+      readonly := true;
+    };
+    required updated_at: datetime {
+      default := datetime_current();
+      rewrite update using (datetime_current());
+    };
+  }
+}

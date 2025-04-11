@@ -1,0 +1,13 @@
+---
+import Header from '@snipbit/components/Header.astro';
+import { BaseLayout } from '@snipbit/layouts';
+---
+
+<BaseLayout title="SnipBit">
+  <div id="container" class="w-full min-h-dvh grid grid-rows-[auto_1fr_auto]">
+    <Header />
+    <h1 class="text-5xl">SnipBit</h1>
+    <p class="text">Share your code</p>
+    <a href="/snippets/new">Create a new Snippet</a>
+  </div>
+</BaseLayout>

@@ -1,0 +1,25 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "types": ["astro/client"],
+    "baseUrl": ".",
+    "paths": {
+      "@astrojs/*": ["node_modules/@astrojs/*"],
+      "@snipbit/components": ["src/components/index.ts"],
+      "@snipbit/features": ["src/features/*"],
+      "@snipbit/layouts": ["src/layouts/index.ts"]
+    },
+    "plugins": [
+      {
+        "name": "@typescript-eslint/tslint-plugin"
+      },
+      {
+        "name": "@astrojs/ts-plugin"
+      }
+    ],
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
+  }
+}

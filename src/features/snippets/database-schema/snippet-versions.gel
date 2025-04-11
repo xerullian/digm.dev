@@ -1,0 +1,11 @@
+module default {
+  type SnippetVersion {
+    required link parent_snippet: Snippet;
+    required code: str;
+    notes: str; # Optional notes about this specific version
+    required created_at: datetime {
+      default := datetime_current();
+      readonly := true;
+    }
+  }
+}

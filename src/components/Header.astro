@@ -1,0 +1,22 @@
+---
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from '@clerk/astro/components';
+---
+
+<header
+  class="bg-slate-700 w-full h-[var(--header-height)] text-slate-50 flex items-center justify-between px-4"
+>
+  <span>SnipBit</span>
+  <nav>
+    <SignedOut>
+      <SignInButton mode="modal" />
+    </SignedOut>
+    <SignedIn>
+      <UserButton />
+    </SignedIn>
+  </nav>
+</header>

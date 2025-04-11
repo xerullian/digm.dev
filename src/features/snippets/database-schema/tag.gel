@@ -1,0 +1,10 @@
+module default {
+  type Tag {
+    required name: str {
+      constraint exclusive;
+    };
+    required created_at: datetime {
+      default := datetime_current();
+    }
+  }
+}

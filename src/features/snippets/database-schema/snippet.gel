@@ -1,0 +1,23 @@
+module default {
+  scalar type Visibility extending enum<Public, Private>;
+
+  type Snippet {
+    required link created_by: User;
+    required link file_type: FileType;
+    required name: str;
+    required description: str;
+    required visibility: Visibility {
+      default := Visibility.Private;
+    }
+    multi link tags: Tag;
+    multi link versions: SnippetVersion;
+    required created_at: datetime {
+      default := datetime_current();
+      readonly := true;
+    };
+    required updated_at: datetime {
+      default := datetime_current();
+      rewrite update using (datetime_current());
+    };
+  }
+}

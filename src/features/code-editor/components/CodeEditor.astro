@@ -1,0 +1,118 @@
+---
+export type Props = {
+  initialCode?: string;
+  name?: string;
+};
+const { initialCode = "console.log('hello world');", name = 'code' } = Astro.props;
+---
+
+<div
+    x-data={`codeEditor(${JSON.stringify(initialCode)})`}
+    class="border border-gray-400 bg-white h-full"
+>
+    <div x-ref="editorTarget" class="h-full"></div>
+    {/* Hidden input to store the code for form submission */}
+    <input type="hidden" name={name} data-hidden-code-input x-ref="hiddenInput" />
+</div>
+
+<style is:global>
+    .cm-editor {
+        height: 100%;
+        font-size: @apply text-base;
+    }
+    .cm-scroller {
+        overflow: auto;
+    }
+    .cm-gutters {
+        background-color: #f7f7f7;
+        border-right: 1px solid #ddd;
+    }
+</style>
+
+<script>
+    import { type AlpineComponent } from 'alpinejs';
+    import { EditorView, keymap, lineNumbers, type ViewUpdate } from '@codemirror/view';
+    import { EditorState } from '@codemirror/state';
+    import { defaultKeymap, history } from '@codemirror/commands';
+    import { javascript } from '@codemirror/lang-javascript';
+
+    // themes for code editor
+    import { dracula } from 'thememirror';
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    type CodeEditorData = AlpineComponent<any> & {
+        editorView: EditorView | undefined;
+        initialCode: string;
+        updateHiddenInput: () => void;
+        init: () => void;
+    };
+
+    document.addEventListener('alpine:init', () => {
+        console.log('alpine:init event fired');
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (globalThis as any).Alpine.data(
+            'codeEditor',
+            (passedInitialCode: string): CodeEditorData => ({
+                editorView: undefined,
+                initialCode: passedInitialCode,
+
+                updateHiddenInput() {
+                    const hiddenInput = this.$refs.hiddenInput as HTMLInputElement | null;
+                    if (this.editorView && hiddenInput) {
+                        hiddenInput.value = this.editorView.state.doc.toString();
+                    }
+                },
+
+                init() {
+                    console.log('alpine code editor init');
+
+                    if (!this.$refs.editorTarget) {
+                        console.error('Code editor target not found.');
+                        return;
+                    }
+                    if (!this.$refs.hiddenInput) {
+                        console.warn('Hidden input element not found.');
+                        // Decide if this is critical; maybe just log a warning
+                    }
+
+                    try {
+                        const state = EditorState.create({
+                            doc: this.initialCode,
+                            extensions: [
+                                lineNumbers(),
+                                history(),
+                                keymap.of(defaultKeymap),
+                                javascript(),
+                                dracula,
+
+                                EditorView.updateListener.of((update: ViewUpdate) => {
+                                    if (update.docChanged) {
+                                        this.updateHiddenInput();
+                                    }
+                                }),
+                            ],
+                        });
+
+                        this.editorView = new EditorView({
+                            state,
+                            parent: this.$refs.editorTarget as HTMLElement,
+                        });
+
+                        this.updateHiddenInput();
+
+                        console.log('CodeMirror EditorView created:', this.editorView);
+                    } catch (error) {
+                        console.error('Error initializing CodeMirror:', error);
+                    }
+                },
+                // destroy() {
+                // Optional: Cleanup when the element is removed (if needed)
+                // this.$watch('$destroy', () => {
+                //   this.editorView?.destroy();
+                // });
+                // }
+            }),
+        );
+    });
+</script>
